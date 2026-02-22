@@ -14,6 +14,7 @@ import {
   Libre_Caslon_Display,
   Playfair_Display,
 } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -126,6 +127,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${eraFontVars} antialiased`}
       >
         {children}
+        <Analytics />
         <footer className="w-full text-center py-6 text-lg text-white/80" style={{ fontFamily: "var(--font-era-1989)" }}>
           <a
             href="https://www.gomodulr.com"
