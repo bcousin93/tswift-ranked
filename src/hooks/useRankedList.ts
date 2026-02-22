@@ -19,7 +19,6 @@ export const ALBUM_ORDER: AlbumId[] = [
   "tortured-poets",
   "showgirl",
   "holiday",
-  "singles",
 ];
 
 const songMap = new Map(SONGS.map((s) => [s.id, s]));

@@ -25,9 +25,11 @@ function saveOrder(albumIds: AlbumId[]) {
 export function useRankedAlbums() {
   const [rankedAlbums, setRankedAlbums] = useState<Album[]>(() => {
     const savedOrder = loadOrder();
+    const albumSet = new Set<AlbumId>(ALBUM_ORDER);
+    const filtered = savedOrder?.filter((id) => albumSet.has(id));
     const order =
-      savedOrder && savedOrder.length === ALBUM_ORDER.length
-        ? savedOrder
+      filtered && filtered.length === ALBUM_ORDER.length
+        ? filtered
         : ALBUM_ORDER;
     return order.map((id) => ALBUMS[id]);
   });
