@@ -7,10 +7,12 @@ import { usePreviewAudio } from "@/hooks/usePreviewAudio";
 
 interface DraggableSourceSongProps {
   song: Song;
+  onAdd?: (songId: string) => void;
 }
 
 export const DraggableSourceSong = React.memo(function DraggableSourceSong({
   song,
+  onAdd,
 }: DraggableSourceSongProps) {
   const { ref, isDragging } = useDraggable({
     id: song.id,
@@ -52,7 +54,22 @@ export const DraggableSourceSong = React.memo(function DraggableSourceSong({
           )}
         </button>
       )}
-      <span>{song.title}</span>
+      <span className="flex-1">{song.title}</span>
+      {onAdd && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onAdd(song.id);
+          }}
+          className="shrink-0 w-6 h-6 rounded-full flex items-center justify-center opacity-0 group-hover/source:opacity-60 hover:!opacity-100 transition-opacity cursor-pointer md:opacity-0 max-md:opacity-60"
+          style={{ color: "var(--theme-text-on-primary)" }}
+          title="Add to ranking"
+        >
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+            <path d="M6 1v10M1 6h10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none" />
+          </svg>
+        </button>
+      )}
     </div>
   );
 });

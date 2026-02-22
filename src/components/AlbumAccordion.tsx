@@ -8,9 +8,10 @@ import { ALBUM_ORDER } from "@/hooks/useRankedList";
 interface AlbumAccordionProps {
   unrankedByAlbum: Record<AlbumId, Song[]>;
   filter?: string;
+  onAddSong?: (songId: string) => void;
 }
 
-export function AlbumAccordion({ unrankedByAlbum, filter = "" }: AlbumAccordionProps) {
+export function AlbumAccordion({ unrankedByAlbum, filter = "", onAddSong }: AlbumAccordionProps) {
   const [expanded, setExpanded] = useState<Set<AlbumId>>(new Set());
 
   const toggle = (albumId: AlbumId) => {
@@ -83,7 +84,7 @@ export function AlbumAccordion({ unrankedByAlbum, filter = "" }: AlbumAccordionP
             {isExpanded && songs.length > 0 && (
               <div className="ml-2 mt-1 mb-1 flex flex-col gap-0.5">
                 {songs.map((song) => (
-                  <DraggableSourceSong key={song.id} song={song} />
+                  <DraggableSourceSong key={song.id} song={song} onAdd={onAddSong} />
                 ))}
               </div>
             )}
