@@ -5,7 +5,8 @@ import type { Album } from "@/data/songs";
 import { exportAlbumRankingCsv } from "@/lib/exportAlbumCsv";
 import {
   exportCardAsPng,
-  shareCard,
+  captureCardAsBlob,
+  shareBlob,
   canShareImageFile,
 } from "@/lib/exportImage";
 import { exportCardAsPdf } from "@/lib/exportPdf";
@@ -21,18 +22,39 @@ export function AlbumExportToolbar({ rankedAlbums }: AlbumExportToolbarProps) {
     "png" | "pdf" | "share" | null
   >(null);
   const [showShare, setShowShare] = useState(false);
+  const shareBlobRef = useRef<Blob | null>(null);
 
   useEffect(() => {
     setShowShare(canShareImageFile());
   }, []);
 
+  // Pre-capture the card image so navigator.share() can fire immediately on click
+  useEffect(() => {
+    if (!showShare || !cardRef.current || rankedAlbums.length === 0) {
+      shareBlobRef.current = null;
+      return;
+    }
+    let cancelled = false;
+    captureCardAsBlob(cardRef.current).then((blob) => {
+      if (!cancelled) shareBlobRef.current = blob;
+    }).catch(() => {
+      // capture failed; handleShare will re-capture as fallback
+    });
+    return () => { cancelled = true; };
+  }, [showShare, rankedAlbums]);
+
   const handleShare = useCallback(async () => {
-    if (!cardRef.current) return;
     setExporting("share");
     try {
-      await shareCard(cardRef.current);
+      if (shareBlobRef.current) {
+        await shareBlob(shareBlobRef.current);
+      } else if (cardRef.current) {
+        // Fallback: capture now (may lose user activation on some browsers)
+        const blob = await captureCardAsBlob(cardRef.current);
+        await shareBlob(blob);
+      }
     } catch {
-      // User cancelled or share failed
+      // User cancelled share sheet
     } finally {
       setExporting(null);
     }

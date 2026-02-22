@@ -49,8 +49,7 @@ export function canShareImageFile(): boolean {
   }
 }
 
-export async function shareCard(cardElement: HTMLElement): Promise<void> {
-  const blob = await captureCardAsBlob(cardElement);
+export async function shareBlob(blob: Blob): Promise<void> {
   const file = new File([blob], "taylor-swift-ranking.png", {
     type: "image/png",
   });
