@@ -1,0 +1,89 @@
+@import "tailwindcss";
+
+/* Register custom properties so browsers can interpolate them */
+@property --theme-primary {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #7c3aed;
+}
+
+@property --theme-secondary {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #a78bfa;
+}
+
+@property --theme-text-on-primary {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #ffffff;
+}
+
+@property --theme-text-body {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #1e1b4b;
+}
+
+@property --theme-surface {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #ede9fe;
+}
+
+@property --theme-surface-border {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #c4b5fd;
+}
+
+:root {
+  --theme-primary: #7c3aed;
+  --theme-secondary: #a78bfa;
+  --theme-text-on-primary: #ffffff;
+  --theme-text-body: #1e1b4b;
+  --theme-surface: #ede9fe;
+  --theme-surface-border: #c4b5fd;
+  --theme-font-family: system-ui, sans-serif;
+}
+
+html {
+  transition:
+    --theme-primary 500ms ease-in-out,
+    --theme-secondary 500ms ease-in-out,
+    --theme-text-on-primary 400ms ease-in-out,
+    --theme-text-body 400ms ease-in-out,
+    --theme-surface 500ms ease-in-out,
+    --theme-surface-border 500ms ease-in-out;
+}
+
+body {
+  background: linear-gradient(
+    135deg,
+    var(--theme-primary),
+    var(--theme-secondary)
+  );
+  color: var(--theme-text-body);
+  min-height: 100dvh;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--theme-primary);
+  border-radius: 4px;
+}
+
+/* Dialog backdrop */
+dialog::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+}
