@@ -30,13 +30,23 @@ export async function exportCardAsPng(
   URL.revokeObjectURL(url);
 }
 
-function canShareFiles(file: File): boolean {
-  return (
-    typeof navigator !== "undefined" &&
-    !!navigator.share &&
-    !!navigator.canShare &&
-    navigator.canShare({ files: [file] })
-  );
+/** Test whether the browser supports sharing a PNG file via Web Share API. */
+export function canShareImageFile(): boolean {
+  if (
+    typeof navigator === "undefined" ||
+    !navigator.share ||
+    !navigator.canShare
+  ) {
+    return false;
+  }
+  try {
+    const testFile = new File([new Uint8Array(0)], "test.png", {
+      type: "image/png",
+    });
+    return navigator.canShare({ files: [testFile] });
+  } catch {
+    return false;
+  }
 }
 
 export async function shareCard(cardElement: HTMLElement): Promise<void> {
@@ -45,19 +55,9 @@ export async function shareCard(cardElement: HTMLElement): Promise<void> {
     type: "image/png",
   });
 
-  if (canShareFiles(file)) {
-    await navigator.share({
-      files: [file],
-      title: "My Taylor Swift Ranking",
-      text: "Check out my Taylor Swift ranking! Make yours at erasranked.com",
-    });
-  } else {
-    // Fallback: download the PNG directly
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.download = "taylor-swift-ranking.png";
-    link.href = url;
-    link.click();
-    URL.revokeObjectURL(url);
-  }
+  await navigator.share({
+    files: [file],
+    title: "My Taylor Swift Ranking",
+    text: "Check out my Taylor Swift ranking! Make yours at erasranked.com",
+  });
 }

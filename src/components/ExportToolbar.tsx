@@ -1,9 +1,13 @@
 "use client";
 
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import type { Song } from "@/data/songs";
 import { exportRankingCsv } from "@/lib/exportCsv";
-import { exportCardAsPng, shareCard } from "@/lib/exportImage";
+import {
+  exportCardAsPng,
+  shareCard,
+  canShareImageFile,
+} from "@/lib/exportImage";
 import { exportCardAsPdf } from "@/lib/exportPdf";
 import { ShareableCard } from "./ShareableCard";
 
@@ -16,6 +20,11 @@ export function ExportToolbar({ rankedSongs }: ExportToolbarProps) {
   const [exporting, setExporting] = useState<
     "png" | "pdf" | "share" | null
   >(null);
+  const [showShare, setShowShare] = useState(false);
+
+  useEffect(() => {
+    setShowShare(canShareImageFile());
+  }, []);
 
   const handleShare = useCallback(async () => {
     if (!cardRef.current) return;
@@ -23,7 +32,7 @@ export function ExportToolbar({ rankedSongs }: ExportToolbarProps) {
     try {
       await shareCard(cardRef.current);
     } catch {
-      // User cancelled share sheet
+      // User cancelled or share failed
     } finally {
       setExporting(null);
     }
@@ -111,19 +120,21 @@ export function ExportToolbar({ rankedSongs }: ExportToolbarProps) {
         >
           {exporting === "pdf" ? "..." : "PDF"}
         </button>
-        <button
-          onClick={handleShare}
-          disabled={!hasRankedSongs || isExporting}
-          className={buttonClass}
-          style={{
-            backgroundColor: "var(--theme-primary)",
-            borderColor: "var(--theme-primary)",
-            color: "var(--theme-text-on-primary)",
-          }}
-          title="Share your ranking"
-        >
-          {exporting === "share" ? "..." : "Share"}
-        </button>
+        {showShare && (
+          <button
+            onClick={handleShare}
+            disabled={!hasRankedSongs || isExporting}
+            className={buttonClass}
+            style={{
+              backgroundColor: "var(--theme-primary)",
+              borderColor: "var(--theme-primary)",
+              color: "var(--theme-text-on-primary)",
+            }}
+            title="Share your ranking"
+          >
+            {exporting === "share" ? "..." : "Share"}
+          </button>
+        )}
       </div>
 
       {/* Hidden card for html2canvas capture */}
