@@ -66,6 +66,7 @@ export function useRankedList() {
     }
     for (const song of SONGS) {
       if (!rankedIds.has(song.id)) {
+        if (!result[song.albumId]) result[song.albumId] = [];
         result[song.albumId].push(song);
       }
     }
