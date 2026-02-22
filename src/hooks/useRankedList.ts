@@ -21,6 +21,9 @@ export const ALBUM_ORDER: AlbumId[] = [
   "holiday",
 ];
 
+/** ALBUM_ORDER + singles — used by the song ranking sidebar */
+export const SONG_ALBUM_ORDER: AlbumId[] = [...ALBUM_ORDER, "singles"];
+
 const songMap = new Map(SONGS.map((s) => [s.id, s]));
 
 function loadOrder(): string[] | null {
