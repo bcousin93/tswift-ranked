@@ -1,9 +1,13 @@
 "use client";
 
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import type { Album } from "@/data/songs";
 import { exportAlbumRankingCsv } from "@/lib/exportAlbumCsv";
-import { exportCardAsPng } from "@/lib/exportImage";
+import {
+  exportCardAsPng,
+  shareCardAsImage,
+  canNativeShare,
+} from "@/lib/exportImage";
 import { exportCardAsPdf } from "@/lib/exportPdf";
 import { AlbumShareableCard } from "./AlbumShareableCard";
 
@@ -13,7 +17,26 @@ interface AlbumExportToolbarProps {
 
 export function AlbumExportToolbar({ rankedAlbums }: AlbumExportToolbarProps) {
   const cardRef = useRef<HTMLDivElement>(null);
-  const [exporting, setExporting] = useState<"png" | "pdf" | null>(null);
+  const [exporting, setExporting] = useState<"png" | "pdf" | "share" | null>(
+    null
+  );
+  const [showShare, setShowShare] = useState(false);
+
+  useEffect(() => {
+    setShowShare(canNativeShare());
+  }, []);
+
+  const handleShare = useCallback(async () => {
+    if (!cardRef.current) return;
+    setExporting("share");
+    try {
+      await shareCardAsImage(cardRef.current);
+    } catch {
+      // User cancelled or share failed — silently ignore
+    } finally {
+      setExporting(null);
+    }
+  }, []);
 
   const handleCsv = useCallback(() => {
     exportAlbumRankingCsv(rankedAlbums);
@@ -97,6 +120,21 @@ export function AlbumExportToolbar({ rankedAlbums }: AlbumExportToolbarProps) {
         >
           {exporting === "pdf" ? "..." : "PDF"}
         </button>
+        {showShare && (
+          <button
+            onClick={handleShare}
+            disabled={!hasAlbums || isExporting}
+            className={buttonClass}
+            style={{
+              backgroundColor: "var(--theme-primary)",
+              borderColor: "var(--theme-primary)",
+              color: "var(--theme-text-on-primary)",
+            }}
+            title="Share your ranking"
+          >
+            {exporting === "share" ? "..." : "Share"}
+          </button>
+        )}
       </div>
 
       {/* Hidden card for html2canvas capture */}
