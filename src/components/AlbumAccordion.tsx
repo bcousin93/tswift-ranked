@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import { ALBUMS, type AlbumId, type Song } from "@/data/songs";
 import { DraggableSourceSong } from "./DraggableSourceSong";
-import { ALBUM_ORDER } from "@/hooks/useRankedList";
+import { SONG_ALBUM_ORDER } from "@/hooks/useRankedList";
 
 interface AlbumAccordionProps {
   unrankedByAlbum: Record<AlbumId, Song[]>;
@@ -31,7 +31,7 @@ export function AlbumAccordion({ unrankedByAlbum, filter = "", onAddSong }: Albu
   const filteredByAlbum = useMemo(() => {
     if (!query) return unrankedByAlbum;
     const result = {} as Record<AlbumId, Song[]>;
-    for (const albumId of ALBUM_ORDER) {
+    for (const albumId of SONG_ALBUM_ORDER) {
       result[albumId] = unrankedByAlbum[albumId].filter((s) =>
         s.title.toLowerCase().includes(query)
       );
@@ -41,7 +41,7 @@ export function AlbumAccordion({ unrankedByAlbum, filter = "", onAddSong }: Albu
 
   return (
     <div className="flex flex-col gap-1">
-      {ALBUM_ORDER.map((albumId) => {
+      {SONG_ALBUM_ORDER.map((albumId) => {
         const album = ALBUMS[albumId];
         const songs = filteredByAlbum[albumId];
         const isFiltering = query.length > 0;

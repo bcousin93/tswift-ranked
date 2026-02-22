@@ -19,8 +19,10 @@ export const ALBUM_ORDER: AlbumId[] = [
   "tortured-poets",
   "showgirl",
   "holiday",
-  "singles",
 ];
+
+/** ALBUM_ORDER + singles — used by the song ranking sidebar */
+export const SONG_ALBUM_ORDER: AlbumId[] = [...ALBUM_ORDER, "singles"];
 
 const songMap = new Map(SONGS.map((s) => [s.id, s]));
 
@@ -67,6 +69,7 @@ export function useRankedList() {
     }
     for (const song of SONGS) {
       if (!rankedIds.has(song.id)) {
+        if (!result[song.albumId]) result[song.albumId] = [];
         result[song.albumId].push(song);
       }
     }
