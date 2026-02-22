@@ -106,11 +106,11 @@ const eraFontVars = [
 export const metadata: Metadata = {
   title: "Taylor Swift Ranked",
   description: "Rank every Taylor Swift song. Your #1 sets the vibe.",
-  metadataBase: new URL("https://erasranked.xyz"),
+  metadataBase: new URL("https://erasranked.com"),
   openGraph: {
     title: "Taylor Swift Ranked",
     description: "Rank every Taylor Swift song. Your #1 sets the vibe.",
-    url: "https://erasranked.xyz",
+    url: "https://erasranked.com",
     siteName: "Eras Ranked",
   },
 };
