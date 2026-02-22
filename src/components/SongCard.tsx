@@ -12,6 +12,8 @@ interface SongCardProps {
   index: number;
   onJumpToRank: () => void;
   onRemove: () => void;
+  onMoveUp?: () => void;
+  onMoveDown?: () => void;
 }
 
 export const SongCard = React.memo(function SongCard({
@@ -20,6 +22,8 @@ export const SongCard = React.memo(function SongCard({
   index,
   onJumpToRank,
   onRemove,
+  onMoveUp,
+  onMoveDown,
 }: SongCardProps) {
   const { ref, isDragging } = useSortable({
     id: song.id,
@@ -103,6 +107,38 @@ export const SongCard = React.memo(function SongCard({
 
       {/* Album badge */}
       <AlbumBadge albumId={song.albumId} />
+
+      {/* Move up/down buttons */}
+      <div className="flex flex-col shrink-0">
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onMoveUp?.();
+          }}
+          disabled={!onMoveUp}
+          className="w-6 h-4 flex items-center justify-center opacity-30 hover:opacity-100 disabled:opacity-10 disabled:cursor-default transition-opacity cursor-pointer"
+          style={{ color: "var(--theme-text-body)" }}
+          title="Move up"
+        >
+          <svg width="10" height="6" viewBox="0 0 10 6" fill="currentColor">
+            <path d="M1 5l4-4 4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+          </svg>
+        </button>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onMoveDown?.();
+          }}
+          disabled={!onMoveDown}
+          className="w-6 h-4 flex items-center justify-center opacity-30 hover:opacity-100 disabled:opacity-10 disabled:cursor-default transition-opacity cursor-pointer"
+          style={{ color: "var(--theme-text-body)" }}
+          title="Move down"
+        >
+          <svg width="10" height="6" viewBox="0 0 10 6" fill="currentColor">
+            <path d="M1 1l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+          </svg>
+        </button>
+      </div>
 
       {/* Jump to rank button */}
       <button

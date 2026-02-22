@@ -50,10 +50,10 @@ function RankingDropZone({
           }}
         >
           <p className="text-lg font-medium opacity-60">
-            Drag songs here to start ranking
+            Add songs to start ranking
           </p>
           <p className="text-sm opacity-40 mt-1">
-            Expand an album on the left and drag songs over
+            Expand an album and tap + or drag songs over
           </p>
         </div>
       ) : (
@@ -137,7 +137,7 @@ export function RankingList() {
               className="w-full px-3 py-1.5 mb-3 rounded-lg text-sm bg-black/30 border border-white/10 text-white/90 placeholder:text-white/40 outline-none focus:border-white/30 transition-colors"
             />
             <div className="max-h-[calc(100dvh-10rem)] overflow-y-auto pr-1">
-              <AlbumAccordion unrankedByAlbum={unrankedByAlbum} filter={songFilter} />
+              <AlbumAccordion unrankedByAlbum={unrankedByAlbum} filter={songFilter} onAddSong={addSong} />
             </div>
           </div>
         </aside>
@@ -155,6 +155,8 @@ export function RankingList() {
                   index={index}
                   onJumpToRank={() => setJumpDialog({ song, index })}
                   onRemove={() => removeSong(song.id)}
+                  onMoveUp={index > 0 ? () => jumpToRank(index, index - 1) : undefined}
+                  onMoveDown={index < rankedSongs.length - 1 ? () => jumpToRank(index, index + 1) : undefined}
                 />
               ))}
             </ol>
@@ -168,7 +170,7 @@ export function RankingList() {
           className="text-xs font-semibold uppercase tracking-wider mb-3 opacity-70"
           style={{ color: "var(--theme-text-on-primary)" }}
         >
-          Albums — drag songs into your ranking above
+          Albums — tap + to add songs to your ranking
         </h2>
         <input
           type="text"
@@ -177,7 +179,7 @@ export function RankingList() {
           placeholder="Search songs..."
           className="w-full px-3 py-1.5 mb-3 rounded-lg text-sm bg-black/30 border border-white/10 text-white/90 placeholder:text-white/40 outline-none focus:border-white/30 transition-colors"
         />
-        <AlbumAccordion unrankedByAlbum={unrankedByAlbum} filter={songFilter} />
+        <AlbumAccordion unrankedByAlbum={unrankedByAlbum} filter={songFilter} onAddSong={addSong} />
       </div>
 
       {jumpDialog && (
