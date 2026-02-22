@@ -1,13 +1,9 @@
 "use client";
 
-import { useRef, useState, useCallback, useEffect } from "react";
+import { useRef, useState, useCallback } from "react";
 import type { Song } from "@/data/songs";
 import { exportRankingCsv } from "@/lib/exportCsv";
-import {
-  exportCardAsPng,
-  shareCardAsImage,
-  canNativeShare,
-} from "@/lib/exportImage";
+import { exportCardAsPng, shareCard } from "@/lib/exportImage";
 import { exportCardAsPdf } from "@/lib/exportPdf";
 import { ShareableCard } from "./ShareableCard";
 
@@ -17,23 +13,17 @@ interface ExportToolbarProps {
 
 export function ExportToolbar({ rankedSongs }: ExportToolbarProps) {
   const cardRef = useRef<HTMLDivElement>(null);
-  const [exporting, setExporting] = useState<"png" | "pdf" | "share" | null>(
-    null
-  );
-  const [showShare, setShowShare] = useState(false);
-
-  // Check for Web Share API support after mount (client-only)
-  useEffect(() => {
-    setShowShare(canNativeShare());
-  }, []);
+  const [exporting, setExporting] = useState<
+    "png" | "pdf" | "share" | null
+  >(null);
 
   const handleShare = useCallback(async () => {
     if (!cardRef.current) return;
     setExporting("share");
     try {
-      await shareCardAsImage(cardRef.current);
+      await shareCard(cardRef.current);
     } catch {
-      // User cancelled or share failed — silently ignore
+      // User cancelled share sheet
     } finally {
       setExporting(null);
     }
@@ -121,21 +111,19 @@ export function ExportToolbar({ rankedSongs }: ExportToolbarProps) {
         >
           {exporting === "pdf" ? "..." : "PDF"}
         </button>
-        {showShare && (
-          <button
-            onClick={handleShare}
-            disabled={!hasRankedSongs || isExporting}
-            className={buttonClass}
-            style={{
-              backgroundColor: "var(--theme-primary)",
-              borderColor: "var(--theme-primary)",
-              color: "var(--theme-text-on-primary)",
-            }}
-            title="Share your ranking"
-          >
-            {exporting === "share" ? "..." : "Share"}
-          </button>
-        )}
+        <button
+          onClick={handleShare}
+          disabled={!hasRankedSongs || isExporting}
+          className={buttonClass}
+          style={{
+            backgroundColor: "var(--theme-primary)",
+            borderColor: "var(--theme-primary)",
+            color: "var(--theme-text-on-primary)",
+          }}
+          title="Share your ranking"
+        >
+          {exporting === "share" ? "..." : "Share"}
+        </button>
       </div>
 
       {/* Hidden card for html2canvas capture */}
