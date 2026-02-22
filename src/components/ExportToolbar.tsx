@@ -43,15 +43,21 @@ export function ExportToolbar({ rankedSongs }: ExportToolbarProps) {
     return () => { cancelled = true; };
   }, [showShare, rankedSongs]);
 
+  const shareMeta = {
+    filename: "taylor-swift-ranking.png",
+    title: "My Taylor Swift Top 13",
+    text: "Check out my Taylor Swift ranking! Make yours at erasranked.com",
+  };
+
   const handleShare = useCallback(async () => {
     setExporting("share");
     try {
       if (shareBlobRef.current) {
-        await shareBlob(shareBlobRef.current);
+        await shareBlob(shareBlobRef.current, shareMeta);
       } else if (cardRef.current) {
         // Fallback: capture now (may lose user activation on some browsers)
         const blob = await captureCardAsBlob(cardRef.current);
-        await shareBlob(blob);
+        await shareBlob(blob, shareMeta);
       }
     } catch {
       // User cancelled share sheet

@@ -49,14 +49,20 @@ export function canShareImageFile(): boolean {
   }
 }
 
-export async function shareBlob(blob: Blob): Promise<void> {
-  const file = new File([blob], "taylor-swift-ranking.png", {
+interface ShareMeta {
+  filename: string;
+  title: string;
+  text: string;
+}
+
+export async function shareBlob(blob: Blob, meta: ShareMeta): Promise<void> {
+  const file = new File([blob], meta.filename, {
     type: "image/png",
   });
 
   await navigator.share({
     files: [file],
-    title: "My Taylor Swift Ranking",
-    text: "Check out my Taylor Swift ranking! Make yours at erasranked.com",
+    title: meta.title,
+    text: meta.text,
   });
 }

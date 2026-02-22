@@ -43,15 +43,21 @@ export function AlbumExportToolbar({ rankedAlbums }: AlbumExportToolbarProps) {
     return () => { cancelled = true; };
   }, [showShare, rankedAlbums]);
 
+  const shareMeta = {
+    filename: "taylor-swift-album-ranking.png",
+    title: "My Taylor Swift Album Ranking",
+    text: "Check out my Taylor Swift album ranking! Make yours at erasranked.com",
+  };
+
   const handleShare = useCallback(async () => {
     setExporting("share");
     try {
       if (shareBlobRef.current) {
-        await shareBlob(shareBlobRef.current);
+        await shareBlob(shareBlobRef.current, shareMeta);
       } else if (cardRef.current) {
         // Fallback: capture now (may lose user activation on some browsers)
         const blob = await captureCardAsBlob(cardRef.current);
-        await shareBlob(blob);
+        await shareBlob(blob, shareMeta);
       }
     } catch {
       // User cancelled share sheet
