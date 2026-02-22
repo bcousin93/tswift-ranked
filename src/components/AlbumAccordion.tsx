@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import { ALBUMS, type AlbumId, type Song } from "@/data/songs";
 import { DraggableSourceSong } from "./DraggableSourceSong";
-import { SONG_SONG_ALBUM_ORDER } from "@/hooks/useRankedList";
+import { SONG_ALBUM_ORDER } from "@/hooks/useRankedList";
 
 interface AlbumAccordionProps {
   unrankedByAlbum: Record<AlbumId, Song[]>;
