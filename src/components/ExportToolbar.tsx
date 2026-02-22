@@ -1,9 +1,14 @@
 "use client";
 
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import type { Song } from "@/data/songs";
 import { exportRankingCsv } from "@/lib/exportCsv";
-import { exportCardAsPng } from "@/lib/exportImage";
+import {
+  exportCardAsPng,
+  captureCardAsBlob,
+  shareBlob,
+  canShareImageFile,
+} from "@/lib/exportImage";
 import { exportCardAsPdf } from "@/lib/exportPdf";
 import { ShareableCard } from "./ShareableCard";
 
@@ -13,7 +18,53 @@ interface ExportToolbarProps {
 
 export function ExportToolbar({ rankedSongs }: ExportToolbarProps) {
   const cardRef = useRef<HTMLDivElement>(null);
-  const [exporting, setExporting] = useState<"png" | "pdf" | null>(null);
+  const [exporting, setExporting] = useState<
+    "png" | "pdf" | "share" | null
+  >(null);
+  const [showShare, setShowShare] = useState(false);
+  const shareBlobRef = useRef<Blob | null>(null);
+
+  useEffect(() => {
+    setShowShare(canShareImageFile());
+  }, []);
+
+  // Pre-capture the card image so navigator.share() can fire immediately on click
+  useEffect(() => {
+    if (!showShare || !cardRef.current || rankedSongs.length === 0) {
+      shareBlobRef.current = null;
+      return;
+    }
+    let cancelled = false;
+    captureCardAsBlob(cardRef.current).then((blob) => {
+      if (!cancelled) shareBlobRef.current = blob;
+    }).catch(() => {
+      // capture failed; handleShare will re-capture as fallback
+    });
+    return () => { cancelled = true; };
+  }, [showShare, rankedSongs]);
+
+  const shareMeta = {
+    filename: "taylor-swift-ranking.png",
+    title: "My Taylor Swift Top 13",
+    text: "Check out my Taylor Swift ranking! Make yours at erasranked.com",
+  };
+
+  const handleShare = useCallback(async () => {
+    setExporting("share");
+    try {
+      if (shareBlobRef.current) {
+        await shareBlob(shareBlobRef.current, shareMeta);
+      } else if (cardRef.current) {
+        // Fallback: capture now (may lose user activation on some browsers)
+        const blob = await captureCardAsBlob(cardRef.current);
+        await shareBlob(blob, shareMeta);
+      }
+    } catch {
+      // User cancelled share sheet
+    } finally {
+      setExporting(null);
+    }
+  }, []);
 
   const handleCsv = useCallback(() => {
     exportRankingCsv(rankedSongs);
@@ -97,6 +148,21 @@ export function ExportToolbar({ rankedSongs }: ExportToolbarProps) {
         >
           {exporting === "pdf" ? "..." : "PDF"}
         </button>
+        {showShare && (
+          <button
+            onClick={handleShare}
+            disabled={!hasRankedSongs || isExporting}
+            className={buttonClass}
+            style={{
+              backgroundColor: "var(--theme-primary)",
+              borderColor: "var(--theme-primary)",
+              color: "var(--theme-text-on-primary)",
+            }}
+            title="Share your ranking"
+          >
+            {exporting === "share" ? "..." : "Share"}
+          </button>
+        )}
       </div>
 
       {/* Hidden card for html2canvas capture */}
