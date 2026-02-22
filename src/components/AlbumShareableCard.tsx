@@ -136,6 +136,17 @@ export const AlbumShareableCard = React.forwardRef<
       >
         Taylor Swift Ranked &middot; {new Date().toLocaleDateString()}
       </div>
+      <div
+        style={{
+          textAlign: "center",
+          marginTop: 8,
+          color: theme.textOnPrimary,
+          opacity: 0.45,
+          fontSize: 18,
+        }}
+      >
+        erasranked.com
+      </div>
     </div>
   );
 });
