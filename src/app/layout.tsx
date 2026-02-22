@@ -126,6 +126,16 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${eraFontVars} antialiased`}
       >
         {children}
+        <footer className="w-full text-center py-6 text-lg text-white/80" style={{ fontFamily: "var(--font-era-1989)" }}>
+          <a
+            href="https://www.gomodulr.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-white transition-colors"
+          >
+            MODULR
+          </a>
+        </footer>
       </body>
     </html>
   );
