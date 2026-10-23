@@ -25,6 +25,8 @@ export function AlbumExportToolbar({ rankedAlbums }: AlbumExportToolbarProps) {
   const shareBlobRef = useRef<Blob | null>(null);
 
   useEffect(() => {
+    // Feature-detect after mount so server and client render the same markup.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setShowShare(canShareImageFile());
   }, []);
 
